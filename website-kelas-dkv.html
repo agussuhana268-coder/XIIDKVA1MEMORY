@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>XII DKV A1 — SMK PUI HAURGEULIS</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#07060a;
+  --ink:#f0ece3;
+  --mid:rgba(240,236,227,0.82);   /* bright readable */
+  --dim:rgba(240,236,227,0.55);   /* secondary text  */
+  --faint:rgba(240,236,227,0.18);
+  --rule:1px solid rgba(240,236,227,0.14);
+  --gold:#c8903a;
+  --gold-dim:rgba(200,144,58,0.25);
+  --g:1.25rem;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--ink);font-family:'DM Mono',monospace;font-weight:300;font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+img{display:block;width:100%;height:100%;object-fit:cover;}
+
+/* ── CANVAS ─── */
+#canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+/* ── GRAIN ─── */
+body::after{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
+  opacity:.35;}
+
+/* ── ORBS ─── */
+.orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(80px);animation:orbFloat linear infinite;}
+.orb-1{width:500px;height:500px;background:rgba(200,144,58,0.07);top:-100px;left:-100px;animation-duration:25s;}
+.orb-2{width:400px;height:400px;background:rgba(74,107,82,0.08);bottom:-80px;right:-80px;animation-duration:32s;animation-delay:-10s;}
+.orb-3{width:300px;height:300px;background:rgba(200,144,58,0.05);top:50%;left:60%;animation-duration:20s;animation-delay:-5s;}
+@keyframes orbFloat{0%{transform:translate(0,0) scale(1);}33%{transform:translate(30px,-40px) scale(1.05);}66%{transform:translate(-20px,30px) scale(.97);}100%{transform:translate(0,0) scale(1);}}
+
+/* ── PAGE ─── */
+.page{position:relative;z-index:2;}
+.label{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);}
+
+/* ── NAV ─── */
+nav{position:fixed;top:0;left:0;right:0;z-index:900;border-bottom:var(--rule);background:rgba(7,6,10,0.88);backdrop-filter:blur(20px);}
+.nav-inner{display:flex;justify-content:space-between;align-items:center;height:52px;padding:0 var(--g);max-width:1160px;margin:0 auto;}
+.nav-mark{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:.15em;color:var(--ink);text-decoration:none;}
+.nav-mark span{color:var(--gold);}
+.nav-links{display:flex;gap:1.8rem;list-style:none;}
+.nav-links a{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mid);text-decoration:none;transition:color .2s;}
+.nav-links a:hover{color:var(--gold);}
+.burger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px;}
+.burger span{display:block;width:20px;height:1px;background:var(--ink);}
+.mob-menu{display:none;flex-direction:column;gap:1.2rem;padding:1.5rem var(--g);border-top:var(--rule);background:rgba(7,6,10,.97);}
+.mob-menu a{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mid);text-decoration:none;}
+.mob-menu.open{display:flex;}
+
+/* ── HERO ─── */
+.hero{min-height:100svh;padding-top:52px;display:flex;flex-direction:column;border-bottom:var(--rule);position:relative;}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;padding:2rem var(--g);border-bottom:var(--rule);max-width:1160px;margin:0 auto;width:100%;}
+.hero-main{flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:0 var(--g) 3.5rem;max-width:1160px;margin:0 auto;width:100%;}
+.hero-h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(5rem,20vw,15rem);line-height:.88;letter-spacing:-.01em;color:var(--ink);animation:fadeUp 1s ease both;}
+.hero-h1 .gld{color:transparent;-webkit-text-stroke:1.5px var(--gold);display:block;animation:glowPulse 4s ease-in-out infinite;}
+@keyframes glowPulse{0%,100%{text-shadow:0 0 60px rgba(200,144,58,0.25);}50%{text-shadow:0 0 130px rgba(200,144,58,0.55),0 0 40px rgba(200,144,58,0.35);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:none;}}
+.hero-byline{margin-top:2rem;display:flex;flex-direction:column;gap:.4rem;animation:fadeUp 1s .18s ease both;}
+.hero-byline .school{font-family:'Cormorant',serif;font-style:italic;font-size:1.15rem;color:var(--mid);}
+.hero-scroll{position:absolute;right:var(--g);bottom:3rem;writing-mode:vertical-rl;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);display:flex;align-items:center;gap:.8rem;}
+.hero-scroll::after{content:'';width:1px;height:60px;background:linear-gradient(to bottom,var(--gold),transparent);animation:lineGrow 2s ease-in-out infinite alternate;}
+@keyframes lineGrow{from{transform:scaleY(.3);opacity:.3;}to{transform:scaleY(1);opacity:1;}}
+.hero-scanline{position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:scan 6s linear infinite;}
+@keyframes scan{0%{opacity:0;}50%{opacity:.5;}100%{opacity:0;}}
+
+/* ── SECTION ─── */
+.sec{border-bottom:var(--rule);}
+.sec-head{display:grid;grid-template-columns:72px 1fr;border-bottom:var(--rule);}
+.sec-n{font-size:9px;letter-spacing:.1em;color:var(--dim);padding:1.1rem 0 1.1rem var(--g);border-right:var(--rule);display:flex;align-items:center;}
+.sec-t{padding:1.1rem 1.5rem;display:flex;align-items:center;}
+.sec-t h2{font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:.22em;color:var(--ink);}
+
+/* ── ABOUT ─── */
+.about-body{display:grid;grid-template-columns:1fr 1fr;}
+.about-left{padding:3rem var(--g);border-right:var(--rule);}
+.about-pull{font-family:'Cormorant',serif;font-size:clamp(1.5rem,3.5vw,2.3rem);line-height:1.25;font-weight:300;color:var(--ink);margin-bottom:2.5rem;}
+.about-pull em{font-style:italic;color:var(--gold);}
+.stats{display:flex;gap:2rem;padding-top:2rem;border-top:var(--rule);flex-wrap:wrap;}
+.s-num{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;line-height:1;color:var(--ink);text-shadow:0 0 30px rgba(200,144,58,0.3);}
+.s-lbl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);margin-top:.3rem;}
+.about-right{padding:3rem var(--g);display:flex;flex-direction:column;gap:1.1rem;}
+.about-right p{font-size:13px;line-height:1.9;color:var(--mid);}
+
+/* ── KENANGAN ─── */
+.ken-body{display:grid;grid-template-columns:repeat(2,1fr);}
+.ken-card{padding:2.5rem var(--g);border-right:var(--rule);border-bottom:var(--rule);position:relative;overflow:hidden;transition:background .3s;}
+.ken-card:nth-child(even){border-right:none;}
+.ken-card:nth-child(n+5){border-bottom:none;}
+.ken-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(200,144,58,0.07),transparent 70%);opacity:0;transition:opacity .3s;}
+.ken-card:hover::before{opacity:1;}
+.ken-n{font-size:9px;letter-spacing:.12em;color:var(--dim);margin-bottom:1.2rem;}
+.ken-tag{display:inline-block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;border:1px solid rgba(200,144,58,0.3);padding:3px 8px;margin-bottom:1rem;color:var(--gold);}
+.ken-card blockquote{font-family:'Cormorant',serif;font-size:clamp(.92rem,2vw,1.1rem);line-height:1.72;font-style:italic;color:var(--mid);font-weight:300;}
+
+/* ── GALLERY ─── */
+.gal-ctrl{display:flex;border-bottom:var(--rule);}
+.fbtn{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;padding:.9rem 1.1rem;border:none;border-right:var(--rule);background:transparent;color:var(--mid);cursor:pointer;transition:all .2s;}
+.fbtn:last-child{border-right:none;}
+.fbtn:hover,.fbtn.on{background:rgba(200,144,58,0.12);color:var(--gold);}
+.gal-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:210px;}
+.pcell{border-right:var(--rule);border-bottom:var(--rule);overflow:hidden;position:relative;cursor:pointer;background:#111019;transition:opacity .3s;}
+.pcell:nth-child(3n){border-right:none;}
+.pcell.wide{grid-column:span 2;}
+.pcell.tall{grid-row:span 2;}
+.pcell img{transition:transform .6s cubic-bezier(.25,.46,.45,.94);}
+.pcell:hover img{transform:scale(1.06);}
+.ph-in{width:100%;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:1.2rem;background:linear-gradient(135deg,#0f0e16,#141220);position:relative;overflow:hidden;}
+.ph-in::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(200,144,58,0.3),transparent);}
+.ph-num{font-size:9px;letter-spacing:.1em;color:var(--mid);}
+.ph-lbl{font-family:'Cormorant',serif;font-style:italic;font-size:.9rem;color:var(--mid);}
+.ph-hint{font-size:8px;letter-spacing:.1em;color:var(--faint);text-transform:uppercase;}
+.ph-ov{position:absolute;bottom:0;left:0;right:0;padding:1.2rem;background:linear-gradient(transparent,rgba(7,6,10,.88));opacity:0;transition:opacity .3s;}
+.pcell:hover .ph-ov{opacity:1;}
+.ph-ov-lbl{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(240,236,227,0.92);}
+
+/* ── LIGHTBOX ─── */
+.lb{position:fixed;inset:0;background:rgba(7,6,10,.97);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1.5rem;opacity:0;pointer-events:none;transition:opacity .3s;}
+.lb.open{opacity:1;pointer-events:all;}
+.lb img{max-width:90vw;max-height:75vh;width:auto;height:auto;object-fit:contain;}
+.lb-meta{font-size:10px;letter-spacing:.17em;text-transform:uppercase;color:var(--mid);text-align:center;}
+.lb-x{position:absolute;top:1.5rem;right:1.5rem;background:none;border:1px solid rgba(240,236,227,.2);color:var(--mid);width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;transition:all .2s;}
+.lb-x:hover{border-color:var(--gold);color:var(--gold);}
+
+/* ── COUNTDOWN ─── */
+.cd-body{padding:4rem var(--g);background:linear-gradient(135deg,rgba(200,144,58,0.06),rgba(74,107,82,0.04));position:relative;overflow:hidden;}
+.cd-body::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.cd-head{font-family:'Cormorant',serif;font-size:clamp(1.4rem,4vw,2.2rem);color:var(--ink);font-style:italic;font-weight:300;max-width:520px;line-height:1.4;margin-bottom:3rem;}
+.cd-boxes{display:flex;flex-wrap:wrap;}
+.cd-box{padding:1.5rem 2.2rem;border:1px solid rgba(200,144,58,0.22);border-right:none;text-align:center;min-width:90px;background:rgba(200,144,58,0.04);}
+.cd-box:last-child{border-right:1px solid rgba(200,144,58,0.22);}
+.cd-v{font-family:'Bebas Neue',sans-serif;font-size:3.2rem;letter-spacing:.04em;color:var(--gold);display:block;line-height:1;animation:numGlow 3s ease-in-out infinite;}
+@keyframes numGlow{0%,100%{text-shadow:0 0 20px rgba(200,144,58,0.3);}50%{text-shadow:0 0 50px rgba(200,144,58,0.65),0 0 20px rgba(200,144,58,0.4);}}
+.cd-l{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--mid);margin-top:.5rem;display:block;}
+
+/* ── MOTIVASI ─── */
+.moti-body{display:grid;grid-template-columns:repeat(2,1fr);}
+.moti-item{padding:2.8rem var(--g);border-right:var(--rule);border-bottom:var(--rule);position:relative;overflow:hidden;transition:background .3s;}
+.moti-item:nth-child(even){border-right:none;}
+.moti-item:nth-child(n+5){border-bottom:none;}
+.moti-item::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 0% 100%,rgba(200,144,58,0.06),transparent 70%);opacity:0;transition:opacity .4s;}
+.moti-item:hover::after{opacity:1;}
+.moti-i{font-size:9px;letter-spacing:.1em;color:var(--dim);margin-bottom:1.5rem;}
+.moti-h{font-family:'Bebas Neue',sans-serif;font-size:1.35rem;letter-spacing:.08em;margin-bottom:.8rem;color:var(--ink);}
+.moti-p{font-size:13px;line-height:1.85;color:var(--mid);}
+.moti-bg{position:absolute;bottom:-1rem;right:.5rem;font-family:'Bebas Neue',sans-serif;font-size:6rem;color:rgba(200,144,58,0.05);line-height:1;pointer-events:none;}
+
+/* ── PLAYER ─── */
+.player-body{display:grid;grid-template-columns:1fr 1fr;}
+.pl-left{padding:3rem var(--g);border-right:var(--rule);display:flex;flex-direction:column;gap:2rem;}
+.pl-now{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--dim);margin-bottom:.8rem;}
+.pl-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.1em;margin-bottom:.3rem;color:var(--ink);}
+.pl-artist{font-family:'Cormorant',serif;font-style:italic;font-size:.95rem;color:var(--mid);}
+.pl-track{height:2px;background:rgba(240,236,227,.15);position:relative;cursor:pointer;margin-top:.4rem;border-radius:1px;}
+.pl-fill{height:100%;background:linear-gradient(90deg,var(--gold),rgba(200,144,58,0.6));position:relative;border-radius:1px;}
+.pl-fill::after{content:'';position:absolute;right:-5px;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--gold);}
+.pl-times{display:flex;justify-content:space-between;font-size:10px;letter-spacing:.07em;color:var(--mid);margin-top:.6rem;}
+.pl-ctrls{display:flex;border:var(--rule);width:fit-content;}
+.ctrl{background:none;border:none;border-right:var(--rule);padding:.75rem 1.3rem;cursor:pointer;font-size:10px;color:var(--mid);transition:all .2s;font-family:'DM Mono',monospace;letter-spacing:.06em;}
+.ctrl:last-child{border-right:none;}
+.ctrl:hover{background:rgba(200,144,58,.12);color:var(--gold);}
+.ctrl.playing{background:var(--gold);color:var(--bg);}
+.pl-note{font-size:10px;color:var(--dim);letter-spacing:.05em;line-height:1.6;}
+.pl-right{padding:3rem var(--g);}
+.pl-list-lbl{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--mid);margin-bottom:1rem;}
+#yt-container{position:fixed;bottom:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;}
+
+/* ── BOARD ─── */
+.board-body{display:grid;grid-template-columns:1fr 1fr;}
+.board-notes{border-right:var(--rule);padding:2.5rem var(--g);max-height:520px;overflow-y:auto;}
+.board-notes::-webkit-scrollbar{width:3px;}
+.board-notes::-webkit-scrollbar-track{background:transparent;}
+.board-notes::-webkit-scrollbar-thumb{background:var(--gold-dim);}
+.rt-badge{display:inline-flex;align-items:center;gap:.4rem;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;}
+.rt-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
+.nc{padding:1.5rem 0;border-bottom:var(--rule);}
+.nc:last-child{border-bottom:none;}
+.nc blockquote{font-family:'Cormorant',serif;font-style:italic;font-size:1rem;line-height:1.68;color:var(--ink);font-weight:300;margin-bottom:.6rem;}
+.nc-from{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--mid);}
+.nc-time{font-size:8px;letter-spacing:.08em;color:var(--faint);margin-top:.2rem;}
+.board-form{padding:2.5rem var(--g);display:flex;flex-direction:column;position:sticky;top:52px;align-self:flex-start;}
+.board-form h3{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.2em;margin-bottom:1.5rem;color:var(--ink);}
+.ff{border:var(--rule);border-bottom:none;display:flex;flex-direction:column;}
+.ff:last-of-type{border-bottom:var(--rule);}
+.ff label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--mid);padding:.6rem 1rem 0;}
+.ff textarea,.ff input{font-family:'DM Mono',monospace;font-size:12px;line-height:1.7;padding:.4rem 1rem .9rem;border:none;background:transparent;color:var(--ink);outline:none;resize:none;letter-spacing:.03em;}
+.ff textarea::placeholder,.ff input::placeholder{color:var(--dim);}
+.sub-btn{margin-top:1.2rem;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:.9rem 1.5rem;border:var(--rule);background:transparent;color:var(--mid);cursor:pointer;transition:all .2s;align-self:flex-start;}
+.sub-btn:hover{background:rgba(200,144,58,.12);border-color:var(--gold);color:var(--gold);}
+.board-status{font-size:9px;letter-spacing:.08em;color:var(--dim);margin-top:.6rem;min-height:14px;}
+
+/* ── TUTORIAL ─── */
+.tut-body{padding:3rem var(--g);}
+.tut-intro{font-size:13px;line-height:1.85;color:var(--mid);max-width:600px;margin-bottom:2.5rem;}
+.tut-steps{display:flex;flex-direction:column;gap:0;border:var(--rule);}
+.tut-step{display:grid;grid-template-columns:56px 1fr;border-bottom:var(--rule);}
+.tut-step:last-child{border-bottom:none;}
+.tut-step-n{padding:1.5rem var(--g);border-right:var(--rule);display:flex;align-items:flex-start;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--gold);letter-spacing:.05em;}
+.tut-step-body{padding:1.5rem 1.5rem;}
+.tut-step-title{font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:.14em;color:var(--ink);margin-bottom:.5rem;}
+.tut-step-desc{font-size:12px;line-height:1.8;color:var(--mid);}
+.code-block{margin-top:.8rem;padding:.8rem 1rem;background:rgba(200,144,58,0.06);border:1px solid rgba(200,144,58,0.15);font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:.04em;word-break:break-all;line-height:1.7;}
+
+/* ── FOOTER ─── */
+footer{background:#050409;border-top:var(--rule);}
+.ft-top{display:grid;grid-template-columns:1fr 1fr;border-bottom:var(--rule);}
+.ft-l{padding:4rem var(--g);border-right:var(--rule);}
+.ft-logo{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;letter-spacing:.06em;line-height:.9;color:var(--ink);margin-bottom:1.5rem;}
+.ft-logo span{color:rgba(200,144,58,0.45);}
+.ft-desc{font-family:'Cormorant',serif;font-style:italic;font-size:1rem;color:var(--mid);line-height:1.65;max-width:340px;}
+.ft-r{padding:4rem var(--g);display:flex;flex-direction:column;justify-content:flex-end;}
+.ft-r p{font-size:10px;letter-spacing:.12em;color:var(--dim);line-height:2.2;text-transform:uppercase;}
+.ft-bot{padding:1.2rem var(--g);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;max-width:1160px;margin:0 auto;width:100%;}
+.ft-bot span{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);}
+.ft-copy{padding:.8rem var(--g);text-align:center;border-top:var(--rule);}
+.ft-copy span{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(240,236,227,0.2);}
+
+/* ── REVEAL ─── */
+.sr{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease;}
+.sr.vis{opacity:1;transform:none;}
+
+/* ── MOBILE ─── */
+@media(max-width:700px){
+  :root{--g:1rem;}
+  .nav-links{display:none;}
+  .burger{display:flex;}
+  .hero-scroll{display:none;}
+  .about-body,.player-body,.board-body,.ft-top{grid-template-columns:1fr;}
+  .about-left,.pl-left,.board-notes,.ft-l{border-right:none;border-bottom:var(--rule);}
+  .board-notes{max-height:340px;}
+  .board-form,.pl-right{position:static;}
+  .ken-body,.moti-body{grid-template-columns:1fr;}
+  .ken-card,.moti-item{border-right:none;}
+  .gal-grid{grid-template-columns:1fr 1fr;grid-auto-rows:150px;}
+  .pcell.wide{grid-column:span 2;}
+  .pcell.tall{grid-row:span 1;}
+  .pcell:nth-child(3n){border-right:var(--rule);}
+  .pcell:nth-child(2n){border-right:none;}
+  .cd-boxes{flex-wrap:wrap;}
+  .cd-box{min-width:80px;padding:1rem 1.5rem;}
+  .cd-v{font-size:2.4rem;}
+  .sec-head{grid-template-columns:50px 1fr;}
+  .tut-step{grid-template-columns:44px 1fr;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- YT HIDDEN -->
+<div id="yt-container"><div id="yt-player"></div></div>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lb">
+  <button class="lb-x" onclick="closeLB()">ESC</button>
+  <img id="lb-img" src="" alt=""/>
+  <div class="lb-meta" id="lb-meta"></div>
+</div>
+
+<div class="page">
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-mark" href="#">XII <span>DKV</span> A1</a>
+    <ul class="nav-links">
+      <li><a href="#about">Tentang</a></li>
+      <li><a href="#kenangan">Kenangan</a></li>
+      <li><a href="#galeri">Galeri</a></li>
+      <li><a href="#motivasi">Motivasi</a></li>
+      <li><a href="#pesan">Pesan</a></li>
+    </ul>
+    <button class="burger" id="burger"><span></span><span></span><span></span></button>
+  </div>
+  <div class="mob-menu" id="mobMenu">
+    <a href="#about" onclick="closeMob()">Tentang Kami</a>
+    <a href="#kenangan" onclick="closeMob()">Kenangan</a>
+    <a href="#galeri" onclick="closeMob()">Galeri</a>
+    <a href="#motivasi" onclick="closeMob()">Motivasi</a>
+    <a href="#pesan" onclick="closeMob()">Papan Pesan</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-top">
+    <div class="label">Angkatan 2023 &ndash; 2026</div>
+    <div style="text-align:right">
+      <div class="label">SMK PUI HAURGEULIS</div>
+      <div class="label" style="margin-top:.2rem">Desain Komunikasi Visual</div>
+    </div>
+  </div>
+  <div class="hero-main">
+    <div class="label" style="margin-bottom:1.2rem">Kelas</div>
+    <h1 class="hero-h1">XII<br><span class="gld">DKV A1</span></h1>
+    <div class="hero-byline">
+      <span class="school">Tiga tahun bersama, seumur hidup dikenang</span>
+      <span class="label" style="margin-top:.4rem;color:var(--mid)">SMK PUI HAURGEULIS &mdash; 2023&ndash;2026</span>
+    </div>
+  </div>
+  <div class="hero-scroll">Gulir ke bawah</div>
+  <div class="hero-scanline"></div>
+</header>
+
+<!-- ABOUT -->
+<section class="sec sr" id="about">
+  <div class="sec-head">
+    <div class="sec-n">01</div>
+    <div class="sec-t"><h2>Tentang Kami</h2></div>
+  </div>
+  <div class="about-body">
+    <div class="about-left">
+      <p class="about-pull">Kelas yang <em>bising,</em><br>berantakan,<br>dan tak terlupakan.</p>
+      <div class="stats">
+        <div><div class="s-num" id="c1">0</div><div class="s-lbl">Anggota Kelas</div></div>
+        <div><div class="s-num" id="c2">0</div><div class="s-lbl">Kenangan</div></div>
+        <div><div class="s-num" id="c3">0</div><div class="s-lbl">Tahun Bersama</div></div>
+      </div>
+    </div>
+    <div class="about-right">
+      <p>Kami bukan kelas biasa. Kami adalah XII DKV A1 &mdash; sekumpulan jiwa kreatif yang belajar bersama, jatuh bersama, dan tumbuh bersama di bawah atap SMK PUI HAURGEULIS.</p>
+      <p>Di balik setiap desain yang lahir ada keringat, canda, sedikit drama, dan banyak cerita. Itulah kami. Berantakan tapi bermakna, keras tapi hangat, dan selalu tak terlupakan.</p>
+      <p>Tiga tahun bukan sekadar sekolah. Di sinilah kami menemukan siapa diri kami sebagai seniman muda, sebagai teman, dan sebagai manusia.</p>
+    </div>
+  </div>
+</section>
+
+<!-- KENANGAN -->
+<section class="sec sr" id="kenangan">
+  <div class="sec-head">
+    <div class="sec-n">02</div>
+    <div class="sec-t"><h2>Kenangan Kelas</h2></div>
+  </div>
+  <div class="ken-body">
+    <div class="ken-card">
+      <div class="ken-n">001</div>
+      <div class="ken-tag">Suara Gitar</div>
+      <blockquote>Sekarang suara gitar dan nyanyian dikelas kita akan menjadi kenangan yang terbaik. Dulu aku pikir kita akan selama lamanya bersama dikelas ini, yang tersisa sekarang hanyalah kenangan.</blockquote>
+    </div>
+    <div class="ken-card">
+      <div class="ken-n">002</div>
+      <div class="ken-tag">Keributan Kelas</div>
+      <blockquote>Saking engga jelasnya kelas kita, sampai di cap kelas paling rusuh sama kepala sekolah, padahal kita kan lagi belajar, tapi sedikit ribut hehe.</blockquote>
+    </div>
+    <div class="ken-card">
+      <div class="ken-n">003</div>
+      <div class="ken-tag">Dihukum Guru</div>
+      <blockquote>Berdiri di depan gerbang dan diusir pulang, tapi kalau bareng-bareng terasa berbeda. Sekarang jadi bahan cerita yang diketawain setiap kali kita kumpul kembali.</blockquote>
+    </div>
+    <div class="ken-card">
+      <div class="ken-n">004</div>
+      <div class="ken-tag">Canda Tawa</div>
+      <blockquote>Tawa di jam istirahat itu singkat, tapi entah kenapa paling susah dilupakan. Lebih berkesan dari pelajaran manapun yang pernah kita dengar di kelas ini.</blockquote>
+    </div>
+    <div class="ken-card">
+      <div class="ken-n">005</div>
+      <div class="ken-tag">Kerja Kelompok</div>
+      <blockquote>Kadang cuma beberapa orang yang bekerja, kesel, senang, tapi lalu tertawa bersama. Itu bukan kerja kelompok biasa. Itu keluarga.</blockquote>
+    </div>
+    <div class="ken-card">
+      <div class="ken-n">006</div>
+      <div class="ken-tag">Hampir Lulus</div>
+      <blockquote>Pintu kelas ini sudah ribuan kali dibuka dan ditutup oleh kita. Tapi satu hari nanti kita akan membukanya untuk terakhir kali. Dan itu akan terasa sangat berbeda.</blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="sec sr" id="galeri">
+  <div class="sec-head">
+    <div class="sec-n">03</div>
+    <div class="sec-t"><h2>Galeri Foto Kenangan</h2></div>
+  </div>
+  <div class="gal-ctrl">
+    <button class="fbtn on" data-f="all">Semua</button>
+    <button class="fbtn" data-f="kelas">Kelas</button>
+    <button class="fbtn" data-f="event">Event</button>
+    <button class="fbtn" data-f="tugas">Tugas</button>
+  </div>
+  <div class="gal-grid">
+    <div class="pcell wide" data-cat="kelas" onclick="openLB(this)"><img src="foto/kenangan1.jpg"ph-num">F-01</div><div><div class="ph-lbl">Foto Kenangan 1</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Kenangan Kelas</div></div></div>
+    <div class="pcell tall" data-cat="event" onclick="openLB(this)"><img src="foto/kenangan2.jpg"ph-num">F-02</div><div><div class="ph-lbl">Foto Kenangan 2</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Event Sekolah</div></div></div>
+    <div class="pcell" data-cat="kelas" onclick="openLB(this)"><img src="foto/kenangan3.jpg"ph-num">F-03</div><div><div class="ph-lbl">Foto Kenangan 3</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Momen Bersama</div></div></div>
+    <div class="pcell" data-cat="tugas" onclick="openLB(this)"><img src="foto/kenangan4.jpg"ph-num">F-04</div><div><div class="ph-lbl">Foto Kenangan 4</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Tugas Bareng</div></div></div>
+    <div class="pcell" data-cat="kelas" onclick="openLB(this)"><img src="foto/kenangan5.jpg"ph-num">F-05</div><div><div class="ph-lbl">Foto Kenangan 5</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Canda Tawa</div></div></div>
+    <div class="pcell wide" data-cat="event" onclick="openLB(this)"><img src="foto/kenangan6.jpg"ph-num">F-06</div><div><div class="ph-lbl">Foto Kenangan 6</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Perjalanan Kita</div></div></div>
+    <div class="pcell" data-cat="tugas" onclick="openLB(this)"><img src="foto/kenangan7.jpg"ph-num">F-07</div><div><div class="ph-lbl">Foto Kenangan 7</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Karya DKV</div></div></div>
+    <div class="pcell" data-cat="kelas" onclick="openLB(this)"><img src="foto/kenangan8.jpg"ph-num">F-08</div><div><div class="ph-lbl">Foto Kenangan 8</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Akhir yang Manis</div></div></div>
+    <div class="pcell" data-cat="event" onclick="openLB(this)"><img src="foto/kenangan9.jpg"ph-num">F-09</div><div><div class="ph-lbl">Foto Kenangan 9</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Kebersamaan</div></div></div>
+  </div>
+</section>
+
+<!-- COUNTDOWN -->
+<section class="sec sr">
+  <div class="sec-head">
+    <div class="sec-n">04</div>
+    <div class="sec-t"><h2>Menuju Kelulusan 2026</h2></div>
+  </div>
+  <div class="cd-body">
+    <p class="cd-head">Setiap detik yang berlalu adalah momen yang tidak akan pernah kembali. Hargai sisa waktu bersama.</p>
+    <div class="cd-boxes">
+      <div class="cd-box"><span class="cd-v" id="cdD">--</span><span class="cd-l">Hari</span></div>
+      <div class="cd-box"><span class="cd-v" id="cdH">--</span><span class="cd-l">Jam</span></div>
+      <div class="cd-box"><span class="cd-v" id="cdM">--</span><span class="cd-l">Menit</span></div>
+      <div class="cd-box"><span class="cd-v" id="cdS">--</span><span class="cd-l">Detik</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- MOTIVASI -->
+<section class="sec sr" id="motivasi">
+  <div class="sec-head">
+    <div class="sec-n">05</div>
+    <div class="sec-t"><h2>Untuk Kalian</h2></div>
+  </div>
+  <div class="moti-body">
+    <div class="moti-item">
+      <div class="moti-i">001</div>
+      <div class="moti-h">Jangan Berhenti Di Sini</div>
+      <p class="moti-p">Lulus bukan akhir perjalanan. Ini adalah awal dari kanvas besar yang menunggu untuk kamu isi. Dunia di luar butuh kreativitasmu &mdash; jangan simpan untuk dirimu sendiri.</p>
+      <div class="moti-bg">01</div>
+    </div>
+    <div class="moti-item">
+      <div class="moti-i">002</div>
+      <div class="moti-h">Kamu Adalah Karyamu</div>
+      <p class="moti-p">Setiap garis yang pernah kamu gambar, setiap desain yang lahir dari tanganmu &mdash; itulah suaramu kepada dunia. Teruslah berkarya, bahkan ketika tidak ada yang melihat.</p>
+      <div class="moti-bg">02</div>
+    </div>
+    <div class="moti-item">
+      <div class="moti-i">003</div>
+      <div class="moti-h">Tumbuh Setelah Berpisah</div>
+      <p class="moti-p">Pohon yang paling kuat tumbuh setelah badai. Perpisahan ini bukan kehilangan &mdash; ini adalah musim tanam baru. Percayalah pada setiap langkah dalam prosesmu.</p>
+      <div class="moti-bg">03</div>
+    </div>
+    <div class="moti-item">
+      <div class="moti-i">004</div>
+      <div class="moti-h">Bawa Api Itu Ke Mana Pun</div>
+      <p class="moti-p">Semangat yang pernah menyala di kelas XII DKV A1 &mdash; bawa ke mana pun kamu pergi. Ke kampus, ke studio, ke kehidupanmu. Jangan biarkan padam.</p>
+      <div class="moti-bg">04</div>
+    </div>
+  </div>
+</section>
+
+<!-- PLAYER — 1 LAGU -->
+<section class="sec sr">
+  <div class="sec-head">
+    <div class="sec-n">06</div>
+    <div class="sec-t"><h2>Lagu Kenangan</h2></div>
+  </div>
+  <div class="player-body">
+    <div class="pl-left">
+      <div>
+        <div class="pl-now">Sedang Diputar</div>
+        <div class="pl-title" id="pT">Masa SMA</div>
+        <div class="pl-artist" id="pA">Angel 9 Band</div>
+      </div>
+      <div>
+        <div class="pl-track" onclick="seekP(event)" id="pTrk">
+          <div class="pl-fill" id="pFill" style="width:0%"></div>
+        </div>
+        <div class="pl-times"><span id="pCur">0:00</span><span id="pTot">0:00</span></div>
+      </div>
+      <div class="pl-ctrls">
+        <button class="ctrl" onclick="prevT()">|&lt;</button>
+        <button class="ctrl" id="pBtn" onclick="togPlay()">PLAY</button>
+        <button class="ctrl" onclick="nextT()">&gt;|</button>
+      </div>
+      <div class="pl-note" id="plNote">Klik PLAY untuk memutar. Pastikan koneksi internet aktif.</div>
+    </div>
+    <div class="pl-right">
+      <div class="pl-list-lbl">Tentang Lagu</div>
+      <div style="padding:1.5rem 0;border-bottom:var(--rule);">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.1em;color:var(--ink);margin-bottom:.4rem">Masa SMA &mdash; Angel 9 Band</div>
+        <div style="font-size:12px;line-height:1.8;color:var(--mid)">Lagu perpisahan yang menceritakan keindahan dan kesedihan meninggalkan masa sekolah. Sebuah pengingat bahwa tiga tahun yang kita jalani bersama tidak akan pernah terganti.</div>
+        <div style="margin-top:1rem;font-size:10px;color:var(--dim);letter-spacing:.06em">&ldquo;Selamat tinggal teman-temanku &mdash; kita berpisah untuk selamanya. Ingatlah pabila bertemu nanti, mohon jangan lupakan aku.&rdquo;</div>
+      </div>
+      <div style="padding:1.5rem 0;">
+        <div style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:.6rem">Tidak bisa diputar?</div>
+        <a href="https://www.youtube.com/results?search_query=Angel+9+Band+Masa+SMA" target="_blank" style="font-size:10px;letter-spacing:.08em;color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(200,144,58,0.3);">Cari di YouTube &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAPAN PESAN REALTIME -->
+<section class="sec sr" id="pesan">
+  <div class="sec-head">
+    <div class="sec-n">07</div>
+    <div class="sec-t"><h2>Papan Pesan</h2></div>
+  </div>
+  <div class="board-body">
+    <div class="board-notes" id="bNotes">
+      <div class="rt-badge"><span class="rt-dot"></span>Live &mdash; pesan tampil secara realtime</div>
+      <!-- pesan akan diisi JS -->
+    </div>
+    <div class="board-form">
+      <h3>Tulis Pesanmu</h3>
+      <div class="ff"><label>Pesan</label><textarea id="msgT" rows="4" placeholder="Tuliskan sesuatu untuk XII DKV A1..."></textarea></div>
+      <div class="ff" style="border-bottom:var(--rule)"><label>Nama</label><input id="msgN" type="text" placeholder="Nama kamu..."/></div>
+      <button class="sub-btn" onclick="postMsg()">Kirim Pesan</button>
+      <div class="board-status" id="bStatus"></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-top">
+    <div class="ft-l">
+      <div class="ft-logo">XII<br><span>DKV A1</span></div>
+      <p class="ft-desc">"Kelas ini mungkin hanya sebuah ruangan, tapi di sinilah kita belajar bukan hanya tentang desain &mdash; melainkan tentang hidup."</p>
+    </div>
+    <div class="ft-r">
+      <p>SMK PUI HAURGEULIS<br>Desain Komunikasi Visual<br>Angkatan 2026<br>&mdash;<br>Selalu di Hati</p>
+    </div>
+  </div>
+  <div class="ft-bot">
+    <span>XII DKV A1 &mdash; SMK PUI HAURGEULIS &mdash; 2023&ndash;2026</span>
+    <span>Website Developer: Kholik Mudzakar</span>
+  </div>
+  <div class="ft-copy">
+    <span>&copy; 2026 Kholik Mudzakar &mdash; All Rights Reserved</span>
+  </div>
+</footer>
+
+</div><!-- /page -->
+
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+// ── CANVAS PARTICLES ────────────────────────
+const cv=document.getElementById('canvas'),cx=cv.getContext('2d');
+let W,H,pts=[];
+function rsz(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
+rsz();addEventListener('resize',rsz);
+function P(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.28;this.vy=(Math.random()-.5)*.28;this.r=Math.random()*1.4+.3;this.a=Math.random()*.6+.1;}
+for(let i=0;i<90;i++)pts.push(new P());
+(function draw(){
+  cx.clearRect(0,0,W,H);
+  pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);cx.fillStyle=`rgba(200,144,58,${p.a*.35})`;cx.fill();});
+  for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<110){cx.beginPath();cx.moveTo(pts[i].x,pts[i].y);cx.lineTo(pts[j].x,pts[j].y);cx.strokeStyle=`rgba(200,144,58,${(1-d/110)*.07})`;cx.lineWidth=.5;cx.stroke();}}
+  requestAnimationFrame(draw);
+})();
+
+// ── NAV ────────────────────────────────────
+document.getElementById('burger').addEventListener('click',()=>document.getElementById('mobMenu').classList.toggle('open'));
+function closeMob(){document.getElementById('mobMenu').classList.remove('open');}
+
+// ── SCROLL REVEAL ───────────────────────────
+const rObs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('vis');}),{threshold:.07});
+document.querySelectorAll('.sr').forEach(el=>rObs.observe(el));
+
+// ── COUNTERS ────────────────────────────────
+function cntUp(el,t,sfx=''){let v=0;const s=Math.ceil(t/40);const iv=setInterval(()=>{v=Math.min(v+s,t);el.textContent=v+sfx;if(v>=t)clearInterval(iv);},35);}
+const cObs=new IntersectionObserver(e=>{if(e[0].isIntersecting){cntUp(document.getElementById('c1'),18);cntUp(document.getElementById('c2'),365,'+');cntUp(document.getElementById('c3'),3);cObs.disconnect();}},{threshold:.3});
+cObs.observe(document.querySelector('.about-body'));
+
+// ── GALLERY FILTER ──────────────────────────
+document.querySelectorAll('.fbtn').forEach(b=>{
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('on'));this.classList.add('on');
+    const f=this.dataset.f;
+    document.querySelectorAll('.pcell').forEach(c=>{const s=f==='all'||c.dataset.cat===f;c.style.opacity=s?'1':'.15';c.style.pointerEvents=s?'':'none';});
+  });
+});
+
+// ── LIGHTBOX ────────────────────────────────
+function openLB(cell){
+  const img=cell.querySelector('img'),lb=document.getElementById('lb');
+  const lbI=document.getElementById('lb-img'),m=document.getElementById('lb-meta');
+  const num=cell.querySelector('.ph-num'),lbl=cell.querySelector('.ph-ov-lbl');
+  if(img){lbI.src=img.src;lbI.style.display='block';}else{lbI.src='';lbI.style.display='none';}
+  m.textContent=(num?num.textContent+' — ':' ')+(lbl?lbl.textContent:'');
+  lb.classList.add('open');document.body.style.overflow='hidden';
+}
+function closeLB(){document.getElementById('lb').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('lb').addEventListener('click',function(e){if(e.target===this)closeLB();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLB();});
+
+// ── COUNTDOWN ───────────────────────────────
+const grad=new Date('2026-06-06T08:00:00');
+function tick(){
+  const diff=grad-new Date();
+  if(diff<=0){['cdD','cdH','cdM','cdS'].forEach(i=>document.getElementById(i).textContent='00');return;}
+  document.getElementById('cdD').textContent=String(Math.floor(diff/86400000)).padStart(2,'0');
+  document.getElementById('cdH').textContent=String(Math.floor((diff%86400000)/3600000)).padStart(2,'0');
+  document.getElementById('cdM').textContent=String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+  document.getElementById('cdS').textContent=String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+}
+tick();setInterval(tick,1000);
+
+// ── YOUTUBE PLAYER (1 LAGU) ─────────────────
+const TRACK={id:'hKqhN88u5BI',title:'Masa SMA',artist:'Angel 9 Band'};
+let ytP=null,ytOk=false,playing=false,tickIv=null;
+const fmt=s=>{if(!s||isNaN(s))return'0:00';s=Math.floor(s);return`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;};
+
+function onYouTubeIframeAPIReady(){
+  ytP=new YT.Player('yt-player',{
+    height:'1',width:'1',videoId:TRACK.id,
+    playerVars:{autoplay:0,controls:0,disablekb:1,modestbranding:1,rel:0},
+    events:{onReady:()=>{ytOk=true;},onStateChange:onSt,onError:onErr}
+  });
+}
+function onSt(e){
+  if(e.data===YT.PlayerState.PLAYING){startTick();}
+  if(e.data===YT.PlayerState.PAUSED||e.data===YT.PlayerState.BUFFERING){stopTick();}
+  if(e.data===YT.PlayerState.ENDED){playing=false;setBtn(false);stopTick();}
+}
+function onErr(){
+  document.getElementById('plNote').innerHTML='Tidak dapat diputar di sini. <a href="https://www.youtube.com/results?search_query=Angel+9+Band+Masa+SMA" target="_blank" style="color:var(--gold);text-decoration:underline">Cari di YouTube &rarr;</a>';
+  playing=false;setBtn(false);
+}
+function startTick(){stopTick();tickIv=setInterval(()=>{if(!ytP||!ytOk)return;const c=ytP.getCurrentTime()||0,d=ytP.getDuration()||0;document.getElementById('pFill').style.width=(d>0?(c/d)*100:0)+'%';document.getElementById('pCur').textContent=fmt(c);document.getElementById('pTot').textContent=fmt(d);},400);}
+function stopTick(){clearInterval(tickIv);}
+function setBtn(on){const b=document.getElementById('pBtn');b.textContent=on?'PAUSE':'PLAY';on?b.classList.add('playing'):b.classList.remove('playing');}
+function togPlay(){if(!ytOk)return;playing=!playing;playing?ytP.playVideo():ytP.pauseVideo();setBtn(playing);}
+function prevT(){if(!ytOk)return;ytP.seekTo(0,true);}
+function nextT(){if(!ytOk)return;ytP.seekTo(ytP.getDuration()||0,true);}
+function seekP(e){if(!ytOk)return;const r=document.getElementById('pTrk').getBoundingClientRect();ytP.seekTo(((e.clientX-r.left)/r.width)*(ytP.getDuration()||0),true);}
+
+// ── REALTIME MESSAGE BOARD ──────────────────
+// Uses window.storage (shared: true) so all viewers share the same messages
+const BOARD_KEY='dkva1_messages_v2';
+let allMessages=[];
+
+async function loadMessages(){
+  try{
+    const res=await window.storage.get(BOARD_KEY,true);
+    allMessages=res?JSON.parse(res.value):[];
+  }catch(e){allMessages=[];}
+  renderMessages();
+}
+
+async function saveMessages(){
+  try{
+    await window.storage.set(BOARD_KEY,JSON.stringify(allMessages),true);
+  }catch(e){}
+}
+
+function renderMessages(){
+  const container=document.getElementById('bNotes');
+  // keep badge
+  const badge=container.querySelector('.rt-badge');
+  container.innerHTML='';
+  if(badge)container.appendChild(badge);
+  else{const b=document.createElement('div');b.className='rt-badge';b.innerHTML='<span class="rt-dot"></span>Live &mdash; pesan tampil secara realtime';container.appendChild(b);}
+
+  if(allMessages.length===0){
+    const empty=document.createElement('div');
+    empty.style.cssText='padding:2rem 0;color:var(--dim);font-size:11px;letter-spacing:.06em;';
+    empty.textContent='Belum ada pesan. Jadilah yang pertama!';
+    container.appendChild(empty);
+    return;
+  }
+  // newest first
+  [...allMessages].reverse().forEach(msg=>{
+    const d=document.createElement('div');d.className='nc';
+    d.innerHTML=`<blockquote>"${msg.text}"</blockquote><div class="nc-from">${msg.from}</div><div class="nc-time">${msg.time}</div>`;
+    container.appendChild(d);
+  });
+  container.scrollTop=0;
+}
+
+async function postMsg(){
+  const t=document.getElementById('msgT').value.trim();
+  const n=document.getElementById('msgN').value.trim()||'Anonim';
+  if(!t){document.getElementById('bStatus').textContent='Tulis pesan dulu ya.';return;}
+  const st=document.getElementById('bStatus');
+  st.textContent='Mengirim...';
+  const now=new Date();
+  const timeStr=now.toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  allMessages.push({text:t,from:n,time:timeStr,ts:now.getTime()});
+  await saveMessages();
+  renderMessages();
+  document.getElementById('msgT').value='';document.getElementById('msgN').value='';
+  st.textContent='Pesan terkirim.';
+  setTimeout(()=>st.textContent='',3000);
+}
+
+// Poll every 5s for new messages from other users
+async function pollMessages(){
+  try{
+    const res=await window.storage.get(BOARD_KEY,true);
+    const remote=res?JSON.parse(res.value):[];
+    if(remote.length!==allMessages.length){allMessages=remote;renderMessages();}
+  }catch(e){}
+}
+
+// Init board
+loadMessages();
+setInterval(pollMessages,5000);
+</script>
+</body>
+</html>
