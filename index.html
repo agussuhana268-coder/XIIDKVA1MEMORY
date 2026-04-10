@@ -383,22 +383,16 @@ footer{background:#050409;border-top:var(--rule);}
     <div class="sec-n">03</div>
     <div class="sec-t"><h2>Galeri Foto Kenangan</h2></div>
   </div>
-  <div class="gal-ctrl">
-    <button class="fbtn on" data-f="all">Semua</button>
-    <button class="fbtn" data-f="kelas">Kelas</button>
-    <button class="fbtn" data-f="event">Event</button>
-    <button class="fbtn" data-f="tugas">Tugas</button>
-  </div>
   <div class="gal-grid">
-    <div class="pcell wide" data-cat="kelas" onclick="openLB(this)"><img src="foto/kenangan1.jpg"ph-num">F-01</div><div><div class="ph-lbl">Foto Kenangan 1</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Kenangan Kelas</div></div></div>
-    <div class="pcell tall" data-cat="event" onclick="openLB(this)"><img src="foto/kenangan2.jpg"ph-num">F-02</div><div><div class="ph-lbl">Foto Kenangan 2</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Event Sekolah</div></div></div>
-    <div class="pcell" data-cat="kelas" onclick="openLB(this)"><img src="foto/kenangan3.jpg"ph-num">F-03</div><div><div class="ph-lbl">Foto Kenangan 3</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Momen Bersama</div></div></div>
-    <div class="pcell" data-cat="tugas" onclick="openLB(this)"><img src="foto/kenangan4.jpg"ph-num">F-04</div><div><div class="ph-lbl">Foto Kenangan 4</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Tugas Bareng</div></div></div>
-    <div class="pcell" data-cat="kelas" onclick="openLB(this)"><img src="foto/kenangan5.jpg"ph-num">F-05</div><div><div class="ph-lbl">Foto Kenangan 5</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Canda Tawa</div></div></div>
-    <div class="pcell wide" data-cat="event" onclick="openLB(this)"><img src="foto/kenangan6.jpg"ph-num">F-06</div><div><div class="ph-lbl">Foto Kenangan 6</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Perjalanan Kita</div></div></div>
-    <div class="pcell" data-cat="tugas" onclick="openLB(this)"><img src="foto/kenangan7.jpg"ph-num">F-07</div><div><div class="ph-lbl">Foto Kenangan 7</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Karya DKV</div></div></div>
-    <div class="pcell" data-cat="kelas" onclick="openLB(this)"><img src="foto/kenangan8.jpg"ph-num">F-08</div><div><div class="ph-lbl">Foto Kenangan 8</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Akhir yang Manis</div></div></div>
-    <div class="pcell" data-cat="event" onclick="openLB(this)"><img src="foto/kenangan9.jpg"ph-num">F-09</div><div><div class="ph-lbl">Foto Kenangan 9</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Kebersamaan</div></div></div>
+    <div class="pcell wide" onclick="openLB(this)"><img src="foto/kenangan1.jpg" alt="Kenangan 1"/><div class="ph-ov"><div class="ph-ov-lbl">Kenangan Kelas</div></div></div>
+    <div class="pcell tall" onclick="openLB(this)"><img src="foto/kenangan2.jpg" alt="Kenangan 2"/><div class="ph-ov"><div class="ph-ov-lbl">Momen Bersama</div></div></div>
+    <div class="pcell" onclick="openLB(this)"><img src="foto/kenangan3.jpg" alt="Kenangan 3"/><div class="ph-ov"><div class="ph-ov-lbl">Canda Tawa</div></div></div>
+    <div class="pcell" onclick="openLB(this)"><img src="foto/kenangan4.jpg" alt="Kenangan 4"/><div class="ph-ov"><div class="ph-ov-lbl">Bersama</div></div></div>
+    <div class="pcell" onclick="openLB(this)"><img src="foto/kenangan5.jpg" alt="Kenangan 5"/><div class="ph-ov"><div class="ph-ov-lbl">Kebersamaan</div></div></div>
+    <div class="pcell wide" onclick="openLB(this)"><img src="foto/kenangan6.jpg" alt="Kenangan 6"/><div class="ph-ov"><div class="ph-ov-lbl">Perjalanan Kita</div></div></div>
+    <div class="pcell" onclick="openLB(this)"><img src="foto/kenangan7.jpg" alt="Kenangan 7"/><div class="ph-ov"><div class="ph-ov-lbl">Karya DKV</div></div></div>
+    <div class="pcell" onclick="openLB(this)"><img src="foto/kenangan8.jpg" alt="Kenangan 8"/><div class="ph-ov"><div class="ph-ov-lbl">Akhir yang Manis</div></div></div>
+    <div class="pcell" onclick="openLB(this)"><img src="foto/kenangan9.jpg" alt="Kenangan 9"/><div class="ph-ov"><div class="ph-ov-lbl">Terindah</div></div></div>
   </div>
 </section>
 
@@ -567,12 +561,6 @@ function cntUp(el,t,sfx=''){let v=0;const s=Math.ceil(t/40);const iv=setInterval
 const cObs=new IntersectionObserver(e=>{if(e[0].isIntersecting){cntUp(document.getElementById('c1'),18);cntUp(document.getElementById('c2'),365,'+');cntUp(document.getElementById('c3'),3);cObs.disconnect();}},{threshold:.3});
 cObs.observe(document.querySelector('.about-body'));
 
-// ── GALLERY FILTER ──────────────────────────
-document.querySelectorAll('.fbtn').forEach(b=>{
-  b.addEventListener('click',function(){
-    document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('on'));this.classList.add('on');
-    const f=this.dataset.f;
-    document.querySelectorAll('.pcell').forEach(c=>{const s=f==='all'||c.dataset.cat===f;c.style.opacity=s?'1':'.15';c.style.pointerEvents=s?'':'none';});
   });
 });
 
