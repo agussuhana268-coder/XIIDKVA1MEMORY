@@ -56,14 +56,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:900;border-bottom:var(--rule);ba
 .mob-menu.open{display:flex;}
 
 /* ── HERO ─── */
-.hero{min-height:100svh;padding-top:52px;display:flex;flex-direction:column;border-bottom:var(--rule);position:relative;}
+.hero{min-height:100vh;min-height:100svh;padding-top:52px;display:flex;flex-direction:column;border-bottom:var(--rule);position:relative;}
 .hero-top{display:flex;justify-content:space-between;align-items:flex-start;padding:2rem var(--g);border-bottom:var(--rule);max-width:1160px;margin:0 auto;width:100%;}
-.hero-main{flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:0 var(--g) 3.5rem;max-width:1160px;margin:0 auto;width:100%;}
-.hero-h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(5rem,20vw,15rem);line-height:.88;letter-spacing:-.01em;color:var(--ink);animation:fadeUp 1s ease both;}
-.hero-h1 .gld{color:transparent;-webkit-text-stroke:1.5px var(--gold);display:block;animation:glowPulse 4s ease-in-out infinite;}
+.hero-main{flex:1;display:flex;flex-direction:column;justify-content:center;padding:2rem var(--g) 3rem;max-width:1160px;margin:0 auto;width:100%;}
+.hero-h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,15vw,12rem);line-height:.9;letter-spacing:-.01em;color:var(--ink);}
+.hero-h1 .gld{color:var(--gold);-webkit-text-stroke:0;display:block;animation:glowPulse 4s ease-in-out infinite;}
 @keyframes glowPulse{0%,100%{text-shadow:0 0 60px rgba(200,144,58,0.25);}50%{text-shadow:0 0 130px rgba(200,144,58,0.55),0 0 40px rgba(200,144,58,0.35);}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:none;}}
-.hero-byline{margin-top:2rem;display:flex;flex-direction:column;gap:.4rem;animation:fadeUp 1s .18s ease both;}
+.hero-byline{margin-top:1.5rem;display:flex;flex-direction:column;gap:.4rem;}
 .hero-byline .school{font-family:'Cormorant',serif;font-style:italic;font-size:1.15rem;color:var(--mid);}
 .hero-scroll{position:absolute;right:var(--g);bottom:3rem;writing-mode:vertical-rl;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);display:flex;align-items:center;gap:.8rem;}
 .hero-scroll::after{content:'';width:1px;height:60px;background:linear-gradient(to bottom,var(--gold),transparent);animation:lineGrow 2s ease-in-out infinite alternate;}
@@ -101,6 +101,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:900;border-bottom:var(--rule);ba
 .ken-card blockquote{font-family:'Cormorant',serif;font-size:clamp(.92rem,2vw,1.1rem);line-height:1.72;font-style:italic;color:var(--mid);font-weight:300;}
 
 /* ── GALLERY ─── */
+.gal-ctrl{display:flex;border-bottom:var(--rule);}
+.fbtn{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;padding:.9rem 1.1rem;border:none;border-right:var(--rule);background:transparent;color:var(--mid);cursor:pointer;transition:all .2s;}
+.fbtn:last-child{border-right:none;}
+.fbtn:hover,.fbtn.on{background:rgba(200,144,58,0.12);color:var(--gold);}
 .gal-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:210px;}
 .pcell{border-right:var(--rule);border-bottom:var(--rule);overflow:hidden;position:relative;cursor:pointer;background:#111019;transition:opacity .3s;}
 .pcell:nth-child(3n){border-right:none;}
@@ -379,16 +383,22 @@ footer{background:#050409;border-top:var(--rule);}
     <div class="sec-n">03</div>
     <div class="sec-t"><h2>Galeri Foto Kenangan</h2></div>
   </div>
+  <div class="gal-ctrl">
+    <button class="fbtn on" data-f="all">Semua</button>
+    <button class="fbtn" data-f="kelas">Kelas</button>
+    <button class="fbtn" data-f="event">Event</button>
+    <button class="fbtn" data-f="tugas">Tugas</button>
+  </div>
   <div class="gal-grid">
-    <div class="pcell wide" data-cat="kelas" onclick="openLB(this)"><img src="foto/kenangan1.jpg" alt="Kenangan 1"/><div class="ph-ov"><div class="ph-ov-lbl">Kenangan Kelas</div></div></div>
-    <div class="pcell tall" data-cat="event" onclick="openLB(this)"><img src="foto/kenangan2.jpg" alt="Kenangan 2"/><div class="ph-ov"><div class="ph-ov-lbl">Event Sekolah</div></div></div>
-    <div class="pcell" data-cat="kelas" onclick="openLB(this)"><img src="foto/kenangan3.jpg" alt="Kenangan 3"/><div class="ph-ov"><div class="ph-ov-lbl">Momen Bersama</div></div></div>
-    <div class="pcell" data-cat="tugas" onclick="openLB(this)"><img src="foto/kenangan4.jpg" alt="Kenangan 4"/><div class="ph-ov"><div class="ph-ov-lbl">Tugas Bareng</div></div></div>
-    <div class="pcell" data-cat="kelas" onclick="openLB(this)"><img src="foto/kenangan5.jpg" alt="Kenangan 5"/><div class="ph-ov"><div class="ph-ov-lbl">Canda Tawa</div></div></div>
-    <div class="pcell wide" data-cat="event" onclick="openLB(this)"><img src="foto/kenangan6.jpg" alt="Kenangan 6"/><div class="ph-ov"><div class="ph-ov-lbl">Perjalanan Kita</div></div></div>
-    <div class="pcell" data-cat="tugas" onclick="openLB(this)"><img src="foto/kenangan7.jpg" alt="Kenangan 7"/><div class="ph-ov"><div class="ph-ov-lbl">Karya DKV</div></div></div>
-    <div class="pcell" data-cat="kelas" onclick="openLB(this)"><img src="foto/kenangan8.jpg" alt="Kenangan 8"/><div class="ph-ov"><div class="ph-ov-lbl">Akhir yang Manis</div></div></div>
-    <div class="pcell" data-cat="event" onclick="openLB(this)"><img src="foto/kenangan9.jpg" alt="Kenangan 9"/><div class="ph-ov"><div class="ph-ov-lbl">Kebersamaan</div></div></div>
+    <div class="pcell wide" data-cat="kelas" onclick="openLB(this)"><img src="foto/kenangan1.jpg"ph-num">F-01</div><div><div class="ph-lbl">Foto Kenangan 1</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Kenangan Kelas</div></div></div>
+    <div class="pcell tall" data-cat="event" onclick="openLB(this)"><img src="foto/kenangan2.jpg"ph-num">F-02</div><div><div class="ph-lbl">Foto Kenangan 2</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Event Sekolah</div></div></div>
+    <div class="pcell" data-cat="kelas" onclick="openLB(this)"><img src="foto/kenangan3.jpg"ph-num">F-03</div><div><div class="ph-lbl">Foto Kenangan 3</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Momen Bersama</div></div></div>
+    <div class="pcell" data-cat="tugas" onclick="openLB(this)"><img src="foto/kenangan4.jpg"ph-num">F-04</div><div><div class="ph-lbl">Foto Kenangan 4</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Tugas Bareng</div></div></div>
+    <div class="pcell" data-cat="kelas" onclick="openLB(this)"><img src="foto/kenangan5.jpg"ph-num">F-05</div><div><div class="ph-lbl">Foto Kenangan 5</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Canda Tawa</div></div></div>
+    <div class="pcell wide" data-cat="event" onclick="openLB(this)"><img src="foto/kenangan6.jpg"ph-num">F-06</div><div><div class="ph-lbl">Foto Kenangan 6</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Perjalanan Kita</div></div></div>
+    <div class="pcell" data-cat="tugas" onclick="openLB(this)"><img src="foto/kenangan7.jpg"ph-num">F-07</div><div><div class="ph-lbl">Foto Kenangan 7</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Karya DKV</div></div></div>
+    <div class="pcell" data-cat="kelas" onclick="openLB(this)"><img src="foto/kenangan8.jpg"ph-num">F-08</div><div><div class="ph-lbl">Foto Kenangan 8</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Akhir yang Manis</div></div></div>
+    <div class="pcell" data-cat="event" onclick="openLB(this)"><img src="foto/kenangan9.jpg"ph-num">F-09</div><div><div class="ph-lbl">Foto Kenangan 9</div><div class="ph-hint">Ganti dengan foto asli</div></div></div><div class="ph-ov"><div class="ph-ov-lbl">Kebersamaan</div></div></div>
   </div>
 </section>
 
@@ -557,6 +567,12 @@ function cntUp(el,t,sfx=''){let v=0;const s=Math.ceil(t/40);const iv=setInterval
 const cObs=new IntersectionObserver(e=>{if(e[0].isIntersecting){cntUp(document.getElementById('c1'),18);cntUp(document.getElementById('c2'),365,'+');cntUp(document.getElementById('c3'),3);cObs.disconnect();}},{threshold:.3});
 cObs.observe(document.querySelector('.about-body'));
 
+// ── GALLERY FILTER ──────────────────────────
+document.querySelectorAll('.fbtn').forEach(b=>{
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.fbtn').forEach(x=>x.classList.remove('on'));this.classList.add('on');
+    const f=this.dataset.f;
+    document.querySelectorAll('.pcell').forEach(c=>{const s=f==='all'||c.dataset.cat===f;c.style.opacity=s?'1':'.15';c.style.pointerEvents=s?'':'none';});
   });
 });
 
