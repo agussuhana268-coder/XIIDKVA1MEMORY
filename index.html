@@ -614,6 +614,10 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const msgCol = db.collection("pesan_kelas");
 
+// Token unik per browser — dipakai untuk identifikasi pesan milik sendiri
+let myToken = localStorage.getItem('dkva1_token');
+if(!myToken){ myToken = Math.random().toString(36).slice(2)+Date.now().toString(36); localStorage.setItem('dkva1_token', myToken); }
+
 function renderMessages(docs){
   const container = document.getElementById('bNotes');
   const badge = container.querySelector('.rt-badge');
@@ -634,20 +638,36 @@ function renderMessages(docs){
   }
   docs.forEach(doc => {
     const msg = doc.data();
+    const isMine = msg.token === myToken;
     const d = document.createElement('div');
     d.className = 'nc';
-    d.innerHTML = `<blockquote>"${msg.text}"</blockquote><div class="nc-from">${msg.from}</div><div class="nc-time">${msg.time||''}</div>`;
+    d.style.position = 'relative';
+    d.innerHTML = `
+      <blockquote>"${msg.text}"</blockquote>
+      <div class="nc-from">${msg.from}</div>
+      <div class="nc-time">${msg.time||''}</div>
+      ${isMine ? `<button onclick="deleteMsg('${doc.id}')" style="position:absolute;top:1rem;right:0;background:none;border:1px solid rgba(240,236,227,0.15);color:rgba(240,236,227,0.35);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;padding:3px 8px;cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='#c8903a';this.style.color='#c8903a'" onmouseout="this.style.borderColor='rgba(240,236,227,0.15)';this.style.color='rgba(240,236,227,0.35)'">HAPUS</button>` : ''}
+    `;
     container.appendChild(d);
   });
 }
 
-// Realtime listener — otomatis update saat ada pesan baru
+// Realtime listener
 msgCol.orderBy("ts", "desc").onSnapshot((snapshot) => {
   renderMessages(snapshot.docs);
 }, (err) => {
   console.error("Firestore error:", err);
   document.getElementById('bStatus').textContent = 'Koneksi database gagal.';
 });
+
+async function deleteMsg(docId){
+  if(!confirm('Hapus pesan ini?')) return;
+  try {
+    await msgCol.doc(docId).delete();
+  } catch(e) {
+    alert('Gagal hapus: ' + e.message);
+  }
+}
 
 async function postMsg(){
   const t = document.getElementById('msgT').value.trim();
@@ -658,7 +678,7 @@ async function postMsg(){
   try {
     const now = new Date();
     const timeStr = now.toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-    await msgCol.add({ text: t, from: n, time: timeStr, ts: firebase.firestore.FieldValue.serverTimestamp() });
+    await msgCol.add({ text: t, from: n, time: timeStr, token: myToken, ts: firebase.firestore.FieldValue.serverTimestamp() });
     document.getElementById('msgT').value = '';
     document.getElementById('msgN').value = '';
     st.textContent = 'Pesan terkirim.';
