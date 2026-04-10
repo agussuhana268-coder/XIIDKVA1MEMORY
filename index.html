@@ -537,17 +537,9 @@ for(let i=0;i<90;i++)pts.push(new P());
 document.getElementById('burger').addEventListener('click',()=>document.getElementById('mobMenu').classList.toggle('open'));
 function closeMob(){document.getElementById('mobMenu').classList.remove('open');}
 
-// ── SCROLL REVEAL ───────────────────────────
-const rObs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('vis');}),{threshold:.07});
-document.querySelectorAll('.sr').forEach(el=>rObs.observe(el));
-
 // ── COUNTERS ────────────────────────────────
 function cntUp(el,t,sfx=''){let v=0;const s=Math.ceil(t/40);const iv=setInterval(()=>{v=Math.min(v+s,t);el.textContent=v+sfx;if(v>=t)clearInterval(iv);},35);}
-const cObs=new IntersectionObserver(e=>{if(e[0].isIntersecting){cntUp(document.getElementById('c1'),18);cntUp(document.getElementById('c2'),365,'+');cntUp(document.getElementById('c3'),3);cObs.disconnect();}},{threshold:.3});
-cObs.observe(document.querySelector('.about-body'));
-
-  });
-});
+window.addEventListener('load',()=>{setTimeout(()=>{cntUp(document.getElementById('c1'),18);cntUp(document.getElementById('c2'),365,'+');cntUp(document.getElementById('c3'),3);},600);});
 
 // ── LIGHTBOX ────────────────────────────────
 function openLB(cell){
