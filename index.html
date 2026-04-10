@@ -518,7 +518,7 @@ footer{background:#050409;border-top:var(--rule);}
 </div><!-- /page -->
 
 <script src="https://www.youtube.com/iframe_api"></script>
-<script>
+<script type="module">
 // ── CANVAS PARTICLES ────────────────────────
 const cv=document.getElementById('canvas'),cx=cv.getContext('2d');
 let W,H,pts=[];
@@ -595,77 +595,77 @@ function prevT(){if(!ytOk)return;ytP.seekTo(0,true);}
 function nextT(){if(!ytOk)return;ytP.seekTo(ytP.getDuration()||0,true);}
 function seekP(e){if(!ytOk)return;const r=document.getElementById('pTrk').getBoundingClientRect();ytP.seekTo(((e.clientX-r.left)/r.width)*(ytP.getDuration()||0),true);}
 
-// ── REALTIME MESSAGE BOARD ──────────────────
-// Uses window.storage (shared: true) so all viewers share the same messages
-const BOARD_KEY='dkva1_messages_v2';
-let allMessages=[];
+// ── FIREBASE REALTIME MESSAGE BOARD ─────────
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-async function loadMessages(){
-  try{
-    const res=await window.storage.get(BOARD_KEY,true);
-    allMessages=res?JSON.parse(res.value):[];
-  }catch(e){allMessages=[];}
-  renderMessages();
-}
+const firebaseConfig = {
+  apiKey: "AIzaSyB2EZgrbnslC1tuyC0WtbIkA4SfJe5m2As",
+  authDomain: "mdzzxiters-panel-30d5a.firebaseapp.com",
+  projectId: "mdzzxiters-panel-30d5a",
+  storageBucket: "mdzzxiters-panel-30d5a.firebasestorage.app",
+  messagingSenderId: "515480722704",
+  appId: "1:515480722704:web:b11e278ebfcdcfa4125995"
+};
 
-async function saveMessages(){
-  try{
-    await window.storage.set(BOARD_KEY,JSON.stringify(allMessages),true);
-  }catch(e){}
-}
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+const msgCol = collection(db, "pesan_kelas");
 
-function renderMessages(){
-  const container=document.getElementById('bNotes');
-  // keep badge
-  const badge=container.querySelector('.rt-badge');
-  container.innerHTML='';
-  if(badge)container.appendChild(badge);
-  else{const b=document.createElement('div');b.className='rt-badge';b.innerHTML='<span class="rt-dot"></span>Live &mdash; pesan tampil secara realtime';container.appendChild(b);}
-
-  if(allMessages.length===0){
-    const empty=document.createElement('div');
-    empty.style.cssText='padding:2rem 0;color:var(--dim);font-size:11px;letter-spacing:.06em;';
-    empty.textContent='Belum ada pesan. Jadilah yang pertama!';
+function renderMessages(docs){
+  const container = document.getElementById('bNotes');
+  const badge = container.querySelector('.rt-badge');
+  container.innerHTML = '';
+  if(badge) container.appendChild(badge);
+  else {
+    const b = document.createElement('div');
+    b.className = 'rt-badge';
+    b.innerHTML = '<span class="rt-dot"></span>Live &mdash; pesan tampil secara realtime';
+    container.appendChild(b);
+  }
+  if(docs.length === 0){
+    const empty = document.createElement('div');
+    empty.style.cssText = 'padding:2rem 0;color:var(--dim);font-size:11px;letter-spacing:.06em;';
+    empty.textContent = 'Belum ada pesan. Jadilah yang pertama!';
     container.appendChild(empty);
     return;
   }
-  // newest first
-  [...allMessages].reverse().forEach(msg=>{
-    const d=document.createElement('div');d.className='nc';
-    d.innerHTML=`<blockquote>"${msg.text}"</blockquote><div class="nc-from">${msg.from}</div><div class="nc-time">${msg.time}</div>`;
+  docs.forEach(doc => {
+    const msg = doc.data();
+    const d = document.createElement('div');
+    d.className = 'nc';
+    d.innerHTML = `<blockquote>"${msg.text}"</blockquote><div class="nc-from">${msg.from}</div><div class="nc-time">${msg.time||''}</div>`;
     container.appendChild(d);
   });
-  container.scrollTop=0;
 }
+
+// Listen realtime
+const q = query(msgCol, orderBy("ts", "desc"));
+onSnapshot(q, (snapshot) => {
+  renderMessages(snapshot.docs);
+}, (err) => {
+  console.error("Firestore error:", err);
+});
 
 async function postMsg(){
-  const t=document.getElementById('msgT').value.trim();
-  const n=document.getElementById('msgN').value.trim()||'Anonim';
-  if(!t){document.getElementById('bStatus').textContent='Tulis pesan dulu ya.';return;}
-  const st=document.getElementById('bStatus');
-  st.textContent='Mengirim...';
-  const now=new Date();
-  const timeStr=now.toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-  allMessages.push({text:t,from:n,time:timeStr,ts:now.getTime()});
-  await saveMessages();
-  renderMessages();
-  document.getElementById('msgT').value='';document.getElementById('msgN').value='';
-  st.textContent='Pesan terkirim.';
-  setTimeout(()=>st.textContent='',3000);
+  const t = document.getElementById('msgT').value.trim();
+  const n = document.getElementById('msgN').value.trim() || 'Anonim';
+  if(!t){ document.getElementById('bStatus').textContent = 'Tulis pesan dulu ya.'; return; }
+  const st = document.getElementById('bStatus');
+  st.textContent = 'Mengirim...';
+  try {
+    const now = new Date();
+    const timeStr = now.toLocaleString('id-ID',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    await addDoc(msgCol, { text: t, from: n, time: timeStr, ts: serverTimestamp() });
+    document.getElementById('msgT').value = '';
+    document.getElementById('msgN').value = '';
+    st.textContent = 'Pesan terkirim.';
+    setTimeout(()=>st.textContent='', 3000);
+  } catch(e) {
+    st.textContent = 'Gagal kirim. Coba lagi.';
+    console.error(e);
+  }
 }
-
-// Poll every 5s for new messages from other users
-async function pollMessages(){
-  try{
-    const res=await window.storage.get(BOARD_KEY,true);
-    const remote=res?JSON.parse(res.value):[];
-    if(remote.length!==allMessages.length){allMessages=remote;renderMessages();}
-  }catch(e){}
-}
-
-// Init board
-loadMessages();
-setInterval(pollMessages,5000);
 </script>
 </body>
 </html>
